@@ -1,9 +1,6 @@
-package com.example.weather
+package com.example.weather.ui
 
 import android.os.Bundle
-import android.util.Log
-import android.util.Log.e
-import android.webkit.ConsoleMessage
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,20 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
-import timber.log.Timber
+import com.example.weather.data.model.WeatherResponse
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
-    /*if (BuildConfig.DEBUG) {
-      Timber.plant(Timber.DebugTree())*/
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
@@ -59,7 +47,6 @@ fun WeatherInfo(data: WeatherResponse) {
     Text(data.current.condition.text)
   }
 }
-
 
 
 @Composable
@@ -100,93 +87,3 @@ fun WeatherScreen(
     }
   }
 }
-
-
-
-class WeatherViewModel : ViewModel() {
-
-  private val repository = WeatherRepository()
-
-  var weather by mutableStateOf<WeatherResponse?>(null)
-    private set
-
-  var error by mutableStateOf<String?>(null)
-    private set
-
-  fun load(city: String) {
-    viewModelScope.launch {
-      try {
-        weather = repository.loadWeather(city)
-        error = null
-        //Timber.e(e, "Ошибка загрузки данных")
-
-      } catch (e: Exception) {
-        Log.e("TAG", e.message ?: "Ошибка", e)
-        error = "Ошибка загрузки данных"
-      }
-    }
-  }
-}
-
-
-
-class WeatherRepository {
-
-  private val apiKey = "cd3283213d9841639cc90416251412"
-
-  suspend fun loadWeather(city: String): WeatherResponse {
-    return RetrofitClient.api.getCurrentWeather(apiKey, city)
-  }
-}
-
-
-object RetrofitClient {
-
-  private const val BASE_URL = "https://api.weatherapi.com/v1/"
-
-  val api: WeatherApi by lazy {
-    Retrofit.Builder()
-      .baseUrl(BASE_URL)
-      .addConverterFactory(GsonConverterFactory.create())
-      .build()
-      .create(WeatherApi::class.java)
-  }
-}
-
-
-
-interface WeatherApi {
-
-  @GET("current.json")
-  suspend fun getCurrentWeather(
-    @Query("key") apiKey: String,
-    @Query("q") city: String,
-    @Query("lang") lang: String = "ru"
-  ): WeatherResponse
-}
-
-
-
-data class WeatherResponse(
-  val location: Location,
-  val current: Current
-)
-
-data class Location(
-  val name: String,
-  val country: String
-)
-
-data class Current(
-  val temp_c: Float,
-  val feelslike_c: Float,
-  val humidity: Int,
-  val pressure_mb: Float,
-  val wind_kph: Float,
-  val condition: Condition
-)
-
-data class Condition(
-  val text: String
-)
-

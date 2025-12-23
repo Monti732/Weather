@@ -2,6 +2,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
+  id("com.google.devtools.ksp")
 }
 
 android {
@@ -37,13 +38,16 @@ android {
 }
 
 dependencies {
-  implementation("com.jakewharton.timber:timber:5.0.1")
-  implementation("androidx.activity:activity-compose:1.12.1")
-  implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
-  implementation("com.squareup.retrofit2:retrofit:3.0.0")
-  implementation("com.squareup.retrofit2:converter-gson:3.0.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+  val roomVersion = "2.8.4"
 
+  implementation("androidx.room:room-runtime:$roomVersion")
+  ksp("androidx.room:room-compiler:2.8.4")
+  implementation(libs.timber)
+  implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.lifecycle.viewmodel.compose)
+  implementation(libs.retrofit)
+  implementation(libs.converter.gson)
+  implementation(libs.kotlinx.coroutines.android)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(libs.androidx.activity.compose)

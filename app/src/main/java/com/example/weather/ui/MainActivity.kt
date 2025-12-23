@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.weather.data.model.WeatherResponse
+import com.example.weather.data.local.WeatherEntity
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,19 +35,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun WeatherInfo(data: WeatherResponse) {
+fun WeatherInfo(data: WeatherEntity) {
 
   Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-    Text("Город: ${data.location.name}, ${data.location.country}")
-    Text("Температура: ${data.current.temp_c} °C")
-    Text("Ощущается: ${data.current.feelslike_c} °C")
-    Text("Влажность: ${data.current.humidity} %")
-    Text("Давление: ${data.current.pressure_mb} мб")
-    Text("Ветер: ${data.current.wind_kph} км/ч")
-    Text(data.current.condition.text)
+    Text("Город: ${data.city}, ${data.country}")
+    Text("Температура: ${data.tempC} °C")
+    Text("Ощущается: ${data.feelsLikeC} °C")
+    Text("Влажность: ${data.humidity} %")
+    Text("Давление: ${data.pressureMb} мб")
+    Text("Ветер: ${data.windKph} км/ч")
+    Text(data.conditionText)
   }
 }
-
 
 @Composable
 @Preview(showBackground = true)

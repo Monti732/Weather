@@ -1,12 +1,10 @@
 package com.example.weather.data.model
 
-import com.example.weather.ui.Condition
-
 data class Current(
-  val temp_c: Float,
-  val feelslike_c: Float,
+  val tempC: Float,
+  val feelsLikeC: Float,
   val humidity: Int,
-  val pressure_mb: Float,
-  val wind_kph: Float,
+  val pressureMb: Float,
+  val windKph: Float,
   val condition: Condition
 )

@@ -1,6 +1,5 @@
 package com.example.weather.data.network
 
-import com.example.weather.ui.WeatherApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

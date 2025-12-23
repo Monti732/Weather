@@ -1,19 +1,24 @@
 package com.example.weather.ui
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weather.data.local.AppDatabase
+import com.example.weather.data.local.WeatherEntity
 import com.example.weather.repository.WeatherRepository
-import com.example.weather.data.model.WeatherResponse
 import kotlinx.coroutines.launch
 
-class WeatherViewModel : ViewModel() {
-  private val repository = WeatherRepository()
+class WeatherViewModel(application: Application) : AndroidViewModel(application) {
 
-  var weather by mutableStateOf<WeatherResponse?>(null)
+  private val repository = WeatherRepository(AppDatabase.getInstance(application).weatherDao())
+
+  var weather by mutableStateOf<WeatherEntity?>(null)
     private set
 
   var error by mutableStateOf<String?>(null)
@@ -21,13 +26,12 @@ class WeatherViewModel : ViewModel() {
 
   fun load(city: String) {
     viewModelScope.launch {
-      try {
-        weather = repository.loadWeather(city)
+      val result = repository.getWeather(city)
+      if (result != null) {
+        weather = result
         error = null
-
-      } catch (e: Exception) {
-        Log.e("TAG", e.message ?: "Ошибка", e)
-        error = "Ошибка загрузки данных"
+      } else {
+        error = "Нет данных"
       }
     }
   }
